@@ -1,0 +1,61 @@
+NAME
+    Data::Clean::JSON - Clean data so it is safe to output to JSON
+
+VERSION
+    version 0.01
+
+SYNOPSIS
+     use Data::Clean::JSON;
+     my $cleaner = Data::Clean::JSON->new;    # there are some options
+     my $data    = { code=>sub {}, re=>qr/abc/i };
+
+     my $cleaned;
+
+     # modifies data in-place
+     $cleaned = $cleaner->clean($data);
+
+     # ditto, but deep clone first, return
+     $cleaned = $cleaner->clone_and_clean($data);
+
+     # now output it
+     use JSON;
+     print encode_json($cleaned); # prints '{"code":"CODE","re":"(?^i:abc)"}'
+
+DESCRIPTION
+    This class cleans data from anything that might be problematic when
+    encoding to JSON. This includes coderefs, globs, and so on.
+
+    Data that has been cleaned will probably not be convertible back to the
+    original, due to information loss (for example, coderefs converted to
+    string "CODE").
+
+    The design goals are good performance, good defaults, and just enough
+    flexibility. The original use-case is for returning JSON response in
+    HTTP API service.
+
+METHODS
+  new(%opts) => $obj
+    Create a new instance. For list of known options, see Data::Clean::Base.
+    Data::Clean::JSON sets the following options:
+
+     (
+         CODE     => [str => "CODE"],   # convert coderef to string "CODE"
+         DateTime => [str => 'epoch'],  # convert DateTime object to Unix time
+         Regexp   => ['str'],           # stringify Regexp
+     )
+
+  $obj->clean_in_place($data) => $cleaned
+    Clean $data. Modify data in-place.
+
+  $obj->clone_and_clean($data) => $cleaned
+    Clean $data. Clone $data first.
+
+AUTHOR
+    Steven Haryanto <stevenharyanto@gmail.com>
+
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2012 by Steven Haryanto.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
+
