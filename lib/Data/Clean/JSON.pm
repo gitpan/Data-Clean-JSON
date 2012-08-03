@@ -6,13 +6,14 @@ use warnings;
 
 use parent qw(Data::Clean::Base);
 
-our $VERSION = '0.01'; # VERSION
+our $VERSION = '0.02'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
-    $opts{CODE}     //= [str => "CODE"];
-    $opts{DateTime} //= [str => 'epoch'];
-    $opts{Regexp}   //= ['str'];
+    $opts{DateTime} //= [call_method => 'epoch'];
+    $opts{Regexp}   //= ['stringify'];
+    $opts{-ref}     //= ['replace_with_ref'];
+    $opts{SCALAR}   //= ['deref_scalar'];
     $class->SUPER::new(%opts);
 }
 
@@ -29,7 +30,7 @@ Data::Clean::JSON - Clean data so it is safe to output to JSON
 
 =head1 VERSION
 
-version 0.01
+version 0.02
 
 =head1 SYNOPSIS
 
@@ -40,7 +41,7 @@ version 0.01
  my $cleaned;
 
  # modifies data in-place
- $cleaned = $cleaner->clean($data);
+ $cleaned = $cleaner->clean_in_place($data);
 
  # ditto, but deep clone first, return
  $cleaned = $cleaner->clone_and_clean($data);
@@ -62,18 +63,21 @@ The design goals are good performance, good defaults, and just enough
 flexibility. The original use-case is for returning JSON response in HTTP API
 service.
 
+This module is significantly faster than L<Data::Rmap> because with Rmap you
+repeatedly invoke anonymous subroutine for each data item. This module, on the
+other hand, generate a cleaner code using eval(), using native Perl for() loops.
+
 =head1 METHODS
 
 =head2 new(%opts) => $obj
 
 Create a new instance. For list of known options, see L<Data::Clean::Base>.
-Data::Clean::JSON sets the following options:
+Data::Clean::JSON sets some defaults.
 
- (
-     CODE     => [str => "CODE"],   # convert coderef to string "CODE"
-     DateTime => [str => 'epoch'],  # convert DateTime object to Unix time
-     Regexp   => ['str'],           # stringify Regexp
- )
+    $opts{DateTime} //= [call_method => 'epoch'];
+    $opts{Regexp}   //= ['stringify'];
+    $opts{-ref}     //= ['replace_with_ref'];
+    $opts{SCALAR}   //= ['deref_scalar'];
 
 =head2 $obj->clean_in_place($data) => $cleaned
 
@@ -82,6 +86,23 @@ Clean $data. Modify data in-place.
 =head2 $obj->clone_and_clean($data) => $cleaned
 
 Clean $data. Clone $data first.
+
+=head1 FAQ
+
+=head2 Why clone/modify? Why not directly output JSON?
+
+So that the data can be used for other stuffs, like outputting to YAML, etc.
+
+=head2 Why is it so slow?
+
+First make sure that you do not construct the Data::Clean::JSON repeatedly, as
+it initializes the cleaner code using eval(). A short benchmark:
+
+ % perl -MBench -MData::Clean::JSON -e'$c=Data::Clean::JSON->new; bench sub { $c->clone_and_clean([1..100]) }, -1'
+ 31641 calls (30358/s), 1.042s (0.0329ms/call)
+
+ % perl -MBench -MData::Clean::JSON -e'bench sub { Data::Clean::JSON->new->clone_and_clean([1..100]) }, -1'
+ 2999 calls (2714/s), 1.105s (0.369ms/call)
 
 =head1 AUTHOR
 

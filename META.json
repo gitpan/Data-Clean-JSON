@@ -33,6 +33,7 @@
       },
       "test" : {
          "requires" : {
+            "DateTime" : 0,
             "Test::More" : "0.96"
          }
       }
@@ -44,6 +45,6 @@
          "url" : "http://github.com/sharyanto/perl-Data-Clean-JSON"
       }
    },
-   "version" : "0.01"
+   "version" : "0.02"
 }
 

@@ -7,6 +7,7 @@ use Module::Build 0.3601;
 
 my %module_build_args = (
   "build_requires" => {
+    "DateTime" => 0,
     "Module::Build" => "0.3601",
     "Test::More" => "0.96"
   },
@@ -18,7 +19,7 @@ my %module_build_args = (
     "Steven Haryanto <stevenharyanto\@gmail.com>"
   ],
   "dist_name" => "Data-Clean-JSON",
-  "dist_version" => "0.01",
+  "dist_version" => "0.02",
   "license" => "perl",
   "module_name" => "Data::Clean::JSON",
   "recommends" => {},
