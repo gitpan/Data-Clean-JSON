@@ -7,14 +7,14 @@ use Log::Any '$log';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.02'; # VERSION
+our $VERSION = '0.03'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
     $opts{-ref} //= ['stringify'];
     my $self = bless {opts=>\%opts}, $class;
-    $log->tracef("Cleaner options: %s", \%opts);
-    $self->_generate_cleaner_code;
+    $log->tracef("Cleanser options: %s", \%opts);
+    $self->_generate_cleanser_code;
     $self;
 }
 
@@ -49,7 +49,7 @@ sub command_die {
     return "die";
 }
 
-sub _generate_cleaner_code {
+sub _generate_cleanser_code {
     my $self = shift;
     my $opts = $self->{opts};
 
@@ -101,7 +101,7 @@ sub _generate_cleaner_code {
     push @code, '}'."\n";
 
     my $code = join("", @code).";";
-    $log->tracef("Cleaner code:\n%s", $code);
+    $log->tracef("Cleanser code:\n%s", $code);
     eval "\$self->{code} = $code";
     die "Can't generate code: $@" if $@;
 }
@@ -133,7 +133,7 @@ Data::Clean::Base - Base class for Data::Clean::*
 
 =head1 VERSION
 
-version 0.02
+version 0.03
 
 =head1 METHODS
 
