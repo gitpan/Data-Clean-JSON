@@ -4,7 +4,7 @@
       "Steven Haryanto <stevenharyanto@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300015, CPAN::Meta::Converter version 2.120921",
+   "generated_by" : "Dist::Zilla version 4.300002, CPAN::Meta::Converter version 2.112150",
    "license" : [
       "perl_5"
    ],
@@ -26,14 +26,14 @@
       },
       "runtime" : {
          "requires" : {
-            "Data::Clone" : "0",
-            "Log::Any" : "0",
+            "Data::Clone" : 0,
+            "Log::Any" : 0,
             "perl" : "5.010001"
          }
       },
       "test" : {
          "requires" : {
-            "DateTime" : "0",
+            "DateTime" : 0,
             "Test::More" : "0.96"
          }
       }
@@ -45,6 +45,6 @@
          "url" : "http://github.com/sharyanto/perl-Data-Clean-JSON"
       }
    },
-   "version" : "0.04"
+   "version" : "0.05"
 }
 

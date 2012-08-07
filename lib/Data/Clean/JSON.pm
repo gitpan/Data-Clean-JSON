@@ -6,7 +6,7 @@ use warnings;
 
 use parent qw(Data::Clean::Base);
 
-our $VERSION = '0.04'; # VERSION
+our $VERSION = '0.05'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -31,7 +31,7 @@ Data::Clean::JSON - Clean data so it is safe to output to JSON
 
 =head1 VERSION
 
-version 0.04
+version 0.05
 
 =head1 SYNOPSIS
 
@@ -105,13 +105,15 @@ So that the data can be used for other stuffs, like outputting to YAML, etc.
 
 First make sure that you do not construct the Data::Clean::JSON repeatedly, as
 it during construction it generates the cleanser code using eval(). A short
-benchmark:
+benchmark (run on my slow Atom netbook):
 
- % perl -MBench -MData::Clean::JSON -e'$c=Data::Clean::JSON->new; bench sub { $c->clone_and_clean([1..100]) }, -1'
- 31641 calls (30358/s), 1.042s (0.0329ms/call)
-
- % perl -MBenchglean::JSON->new->clone_and_clean([1..100]) }, -1'
- 2999 calls (2714/s), 1.105s (0.369ms/call)
+ % bench -MData::Clean::JSON -b'$c=Data::Clean::JSON->new' \
+     'Data::Clean::JSON->new->clone_and_clean([1..100])' \
+     '$c->clone_and_clean([1..100])'
+ Benchmarking sub { Data::Clean::JSON->new->clean_in_place([1..100]) }, sub { $c->clean_in_place([1..100]) } ...
+ a: 302 calls (291.3/s), 1.037s (3.433ms/call)
+ b: 7043 calls (4996/s), 1.410s (0.200ms/call)
+ Fastest is b (17.15x a)
 
 Second, you can turn off some checks if you are sure you will not be getting bad
 data. For example, if you know that your input will not contain circular
@@ -121,11 +123,15 @@ references, you can turn off circular detection:
 
 Benchmark:
 
- % perl -MBench -MData::Clean::JSON -e'$c=Data::Clean::JSON->new; $data=[1..100]; bench sub { $c->clean_in_place($data) }, -1'
- 38461 calls (28086/s), 1.369s (0.0356ms/call)
-
- % perl -MBench -MData::Clean::JSON -e'$c=Data::Clean::JSON->new(-circular=>0); $data=[1..100]; bench sub { $c->clean_in_place($data) }, -1'
- 45455 calls (32094/s), 1.416s (0.0312ms/call)
+ $ perl -MData::Clean::JSON -MBench -E '
+   $data = [[1],[2],[3],[4],[5]];
+   bench {
+       circ   => sub { state $c = Data::Clean::JSON->new;               $c->clone_and_clean($data) },
+       nocirc => sub { state $c = Data::Clean::JSON->new(-circular=>0); $c->clone_and_clean($data) }
+   }, -1'
+ circ: 9456 calls (9425/s), 1.003s (0.106ms/call)
+ nocirc: 13161 calls (12885/s), 1.021s (0.0776ms/call)
+ Fastest is nocirc (1.367x circ)
 
 The less number of actions you do, the faster the cleansing process will be.
 
