@@ -7,7 +7,7 @@ use Log::Any '$log';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -41,6 +41,13 @@ sub command_replace_with_ref {
 sub command_replace_with_str {
     my ($self, $args) = @_;
     return "{{var}} = '$args->[0]'";
+}
+
+sub command_unbless {
+    require Data::Structure::Util;
+
+    my ($self, $args) = @_;
+    return "{{var}} = Data::Structure::Util::unbless({{var}})";
 }
 
 # test
@@ -109,7 +116,7 @@ sub _generate_cleanser_code {
     push @code, '}'."\n";
 
     my $code = join("", @code).";";
-    $log->tracef("Cleanser code:\n%s", $code);
+    $log->tracef("Cleanser code:\n%s", $code) if $ENV{LOG_CLEANSER_CODE};
     eval "\$self->{code} = $code";
     die "Can't generate code: $@" if $@;
 }
@@ -131,8 +138,8 @@ sub clone_and_clean {
 1;
 # ABSTRACT: Base class for Data::Clean::*
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -141,7 +148,9 @@ Data::Clean::Base - Base class for Data::Clean::*
 
 =head1 VERSION
 
-version 0.05
+version 0.06
+
+=for Pod::Coverage ^(command_.+)$
 
 =head1 METHODS
 
@@ -149,35 +158,42 @@ version 0.05
 
 Create a new instance.
 
-Options specify what to do with problematic kinds of data. Option keys are
-either reference types or class names, or C<-obj> (to refer to objects, a.k.a.
-blessed references), C<-circular> (to refer to circular references), C<-ref> (to
-refer to references, used to process references not handled by other options).
-Option values are arrayrefs, the first element of the array is command name, to
-specify what to do with the reference/class. The rest are command arguments.
-Available commands:
+Options specify what to do with problematic data. Option keys are either
+reference types or class names, or C<-obj> (to refer to objects, a.k.a. blessed
+references), C<-circular> (to refer to circular references), C<-ref> (to refer
+to references, used to process references not handled by other options). Option
+values are arrayrefs, the first element of the array is command name, to specify
+what to do with the reference/class. The rest are command arguments. Available
+commands:
 
 =over 4
 
 =item * ['stringify']
 
-This will stringify C<{}> to something like C<HASH(0x135f998)>.
+This will stringify a reference like C<{}> to something like C<HASH(0x135f998)>.
 
 =item * ['replace_with_ref']
 
-This will replace C<{}> with C<HASH>.
+This will replace a reference like C<{}> with C<HASH>.
 
 =item * ['replace_with_str', STR]
 
-This will replace C<{}> with I<STR>.
+This will replace a reference like C<{}> with I<STR>.
 
 =item * ['call_method']
 
-This will call a method and use its return as the replacement.
+This will call a method and use its return as the replacement. For example:
+DateTime->from_epoch(epoch=>1000) when processed with [call_method => 'epoch']
+will become 1000.
 
 =item * ['deref_scalar']
 
-This will replace \1 with 1.
+This will replace a scalar reference like \1 with 1.
+
+=item * ['unbless']
+
+This will perform unblessing using L<Data::Structure::Util>. Should be done only
+for objects (C<-obj>).
 
 =back
 
@@ -207,16 +223,26 @@ Clean $data. Modify data in-place.
 
 Clean $data. Clone $data first.
 
+=head1 ENVIRONMENT
+
+=over
+
+=item * LOG_CLEANSER_CODE => BOOL (default: 0)
+
+Can be enabled if you want to see the generated cleanser code. It is logged at
+level C<trace>.
+
+=back
+
 =head1 AUTHOR
 
 Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

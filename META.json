@@ -4,7 +4,7 @@
       "Steven Haryanto <stevenharyanto@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.300002, CPAN::Meta::Converter version 2.112150",
+   "generated_by" : "Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.131560",
    "license" : [
       "perl_5"
    ],
@@ -24,27 +24,36 @@
             "Module::Build" : "0.3601"
          }
       },
+      "develop" : {
+         "requires" : {
+            "Pod::Coverage::TrustPod" : "0",
+            "Test::Pod" : "1.41",
+            "Test::Pod::Coverage" : "1.08",
+            "Test::Rinci" : "0.01"
+         }
+      },
       "runtime" : {
          "requires" : {
-            "Data::Clone" : 0,
-            "Log::Any" : 0,
+            "Data::Clone" : "0",
+            "Data::Structure::Util" : "0",
+            "Log::Any" : "0",
             "perl" : "5.010001"
          }
       },
       "test" : {
          "requires" : {
-            "DateTime" : 0,
+            "DateTime" : "0",
             "Test::More" : "0.96"
          }
       }
    },
    "release_status" : "stable",
    "resources" : {
-      "homepage" : "http://metacpan.org/dist/Data-Clean-JSON",
+      "homepage" : "http://metacpan.org/release/Data-Clean-JSON",
       "repository" : {
          "url" : "http://github.com/sharyanto/perl-Data-Clean-JSON"
       }
    },
-   "version" : "0.05"
+   "version" : "0.06"
 }
 

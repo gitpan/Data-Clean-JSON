@@ -6,7 +6,7 @@ use warnings;
 
 use parent qw(Data::Clean::Base);
 
-our $VERSION = '0.05'; # VERSION
+our $VERSION = '0.06'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -15,14 +15,15 @@ sub new {
     $opts{SCALAR}    //= ['deref_scalar'];
     $opts{-ref}      //= ['replace_with_ref'];
     $opts{-circular} //= ['detect_circular'];
+    $opts{-obj}      //= ['unbless'];
     $class->SUPER::new(%opts);
 }
 
 1;
 # ABSTRACT: Clean data so it is safe to output to JSON
 
-
 __END__
+
 =pod
 
 =head1 NAME
@@ -31,7 +32,7 @@ Data::Clean::JSON - Clean data so it is safe to output to JSON
 
 =head1 VERSION
 
-version 0.05
+version 0.06
 
 =head1 SYNOPSIS
 
@@ -66,7 +67,7 @@ service.
 
 This module is significantly faster than L<Data::Rmap> because with Rmap you
 repeatedly invoke anonymous subroutine for each data item. This module, on the
-other hand, generate a cleanser code using eval(), using native Perl for()
+other hand, generates a cleanser code using eval(), using native Perl for()
 loops.
 
 The generated cleanser code is logged using L<Log::Any> at trace level. You can
@@ -86,6 +87,7 @@ Data::Clean::JSON sets some defaults.
     SCALAR    => ['deref_scalar']
     -ref      => ['replace_with_ref']
     -circular => ['detect_circular']
+    -obj      => ['unbless']
 
 =head2 $obj->clean_in_place($data) => $cleaned
 
@@ -103,9 +105,9 @@ So that the data can be used for other stuffs, like outputting to YAML, etc.
 
 =head2 Why is it slow?
 
-First make sure that you do not construct the Data::Clean::JSON repeatedly, as
-it during construction it generates the cleanser code using eval(). A short
-benchmark (run on my slow Atom netbook):
+First make sure that you do not construct the Data::Clean::JSON object
+repeatedly, as the constructor generates the cleanser code first using eval(). A
+short benchmark (run on my slow Atom netbook):
 
  % bench -MData::Clean::JSON -b'$c=Data::Clean::JSON->new' \
      'Data::Clean::JSON->new->clone_and_clean([1..100])' \
@@ -133,7 +135,14 @@ Benchmark:
  nocirc: 13161 calls (12885/s), 1.021s (0.0776ms/call)
  Fastest is nocirc (1.367x circ)
 
-The less number of actions you do, the faster the cleansing process will be.
+The less number of checks you do, the faster the cleansing process will be.
+
+=head2 Why am I getting 'Not a CODE reference at lib/Data/Clean/Base.pm line xxx'?
+
+[2013-08-07 ] This error message is from Data::Clone::clone() when it is cloning
+an object. If you are cleaning objects, instead of using clone_and_clean(), try
+using clean_in_place(). Or, clone your data first using something else like
+L<Storable>.
 
 =head1 AUTHOR
 
@@ -141,10 +150,9 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2012 by Steven Haryanto.
+This software is copyright (c) 2013 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

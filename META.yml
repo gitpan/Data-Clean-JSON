@@ -9,7 +9,7 @@ build_requires:
 configure_requires:
   Module::Build: 0.3601
 dynamic_config: 0
-generated_by: 'Dist::Zilla version 4.300002, CPAN::Meta::Converter version 2.112150'
+generated_by: 'Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.131560'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -17,9 +17,10 @@ meta-spec:
 name: Data-Clean-JSON
 requires:
   Data::Clone: 0
+  Data::Structure::Util: 0
   Log::Any: 0
   perl: 5.010001
 resources:
-  homepage: http://metacpan.org/dist/Data-Clean-JSON
+  homepage: http://metacpan.org/release/Data-Clean-JSON
   repository: http://github.com/sharyanto/perl-Data-Clean-JSON
-version: 0.05
+version: 0.06
