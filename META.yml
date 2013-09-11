@@ -4,10 +4,9 @@ author:
   - 'Steven Haryanto <stevenharyanto@gmail.com>'
 build_requires:
   DateTime: 0
-  Module::Build: 0.3601
   Test::More: 0.96
 configure_requires:
-  Module::Build: 0.3601
+  ExtUtils::MakeMaker: 6.30
 dynamic_config: 0
 generated_by: 'Dist::Zilla version 4.300035, CPAN::Meta::Converter version 2.131560'
 license: perl
@@ -16,11 +15,11 @@ meta-spec:
   version: 1.4
 name: Data-Clean-JSON
 requires:
+  Acme::Damn: 0
   Data::Clone: 0
-  Data::Structure::Util: 0
   Log::Any: 0
   perl: 5.010001
 resources:
   homepage: http://metacpan.org/release/Data-Clean-JSON
   repository: http://github.com/sharyanto/perl-Data-Clean-JSON
-version: 0.06
+version: 0.07

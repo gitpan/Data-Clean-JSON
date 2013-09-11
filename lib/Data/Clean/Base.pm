@@ -7,7 +7,7 @@ use Log::Any '$log';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.06'; # VERSION
+our $VERSION = '0.07'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -44,10 +44,10 @@ sub command_replace_with_str {
 }
 
 sub command_unbless {
-    require Data::Structure::Util;
+    require Acme::Damn;
 
     my ($self, $args) = @_;
-    return "{{var}} = Data::Structure::Util::unbless({{var}})";
+    return "{{var}} = Acme::Damn::damn({{var}})";
 }
 
 # test
@@ -148,7 +148,7 @@ Data::Clean::Base - Base class for Data::Clean::*
 
 =head1 VERSION
 
-version 0.06
+version 0.07
 
 =for Pod::Coverage ^(command_.+)$
 
@@ -192,8 +192,8 @@ This will replace a scalar reference like \1 with 1.
 
 =item * ['unbless']
 
-This will perform unblessing using L<Data::Structure::Util>. Should be done only
-for objects (C<-obj>).
+This will perform unblessing using L<Acme::Damn>. Should be done only for
+objects (C<-obj>).
 
 =back
 

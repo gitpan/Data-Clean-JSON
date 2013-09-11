@@ -14,14 +14,9 @@
    },
    "name" : "Data-Clean-JSON",
    "prereqs" : {
-      "build" : {
-         "requires" : {
-            "Module::Build" : "0.3601"
-         }
-      },
       "configure" : {
          "requires" : {
-            "Module::Build" : "0.3601"
+            "ExtUtils::MakeMaker" : "6.30"
          }
       },
       "develop" : {
@@ -34,8 +29,8 @@
       },
       "runtime" : {
          "requires" : {
+            "Acme::Damn" : "0",
             "Data::Clone" : "0",
-            "Data::Structure::Util" : "0",
             "Log::Any" : "0",
             "perl" : "5.010001"
          }
@@ -54,6 +49,6 @@
          "url" : "http://github.com/sharyanto/perl-Data-Clean-JSON"
       }
    },
-   "version" : "0.06"
+   "version" : "0.07"
 }
 

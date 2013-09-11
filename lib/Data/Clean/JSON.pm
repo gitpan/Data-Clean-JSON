@@ -6,7 +6,7 @@ use warnings;
 
 use parent qw(Data::Clean::Base);
 
-our $VERSION = '0.06'; # VERSION
+our $VERSION = '0.07'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -32,7 +32,7 @@ Data::Clean::JSON - Clean data so it is safe to output to JSON
 
 =head1 VERSION
 
-version 0.06
+version 0.07
 
 =head1 SYNOPSIS
 
