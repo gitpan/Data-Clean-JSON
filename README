@@ -2,7 +2,7 @@ NAME
     Data::Clean::JSON - Clean data so it is safe to output to JSON
 
 VERSION
-    version 0.08
+    version 0.09
 
 SYNOPSIS
      use Data::Clean::JSON;
