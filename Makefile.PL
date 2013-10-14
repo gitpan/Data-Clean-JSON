@@ -22,13 +22,18 @@ my %WriteMakefileArgs = (
   "PREREQ_PM" => {
     "Acme::Damn" => 0,
     "Data::Clone" => 0,
-    "Log::Any" => 0
+    "Log::Any" => 0,
+    "SHARYANTO::String::Util" => 0
   },
   "TEST_REQUIRES" => {
     "DateTime" => 0,
-    "Test::More" => "0.96"
+    "File::Spec" => 0,
+    "IO::Handle" => 0,
+    "IPC::Open3" => 0,
+    "JSON" => 0,
+    "Test::More" => "0.98"
   },
-  "VERSION" => "0.07",
+  "VERSION" => "0.08",
   "test" => {
     "TESTS" => "t/*.t"
   }

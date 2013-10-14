@@ -6,10 +6,12 @@ use warnings;
 
 use parent qw(Data::Clean::Base);
 
-our $VERSION = '0.07'; # VERSION
+our $VERSION = '0.08'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
+    $opts{"JSON::XS::Boolean"} //= ['one_or_zero'];
+    $opts{"JSON::PP::Boolean"} //= ['one_or_zero'];
     $opts{DateTime}  //= [call_method => 'epoch'];
     $opts{Regexp}    //= ['stringify'];
     $opts{SCALAR}    //= ['deref_scalar'];
@@ -32,7 +34,7 @@ Data::Clean::JSON - Clean data so it is safe to output to JSON
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =head1 SYNOPSIS
 
@@ -83,6 +85,8 @@ Create a new instance. For list of known options, see L<Data::Clean::Base>.
 Data::Clean::JSON sets some defaults.
 
     DateTime  => [call_method => 'epoch']
+    "JSON::PP::Boolean" => ['one_or_zero']
+    "JSON::XS::Boolean" => ['one_or_zero']
     Regexp    => ['stringify']
     SCALAR    => ['deref_scalar']
     -ref      => ['replace_with_ref']

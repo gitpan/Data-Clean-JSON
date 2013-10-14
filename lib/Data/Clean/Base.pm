@@ -7,7 +7,7 @@ use Log::Any '$log';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.07'; # VERSION
+our $VERSION = '0.08'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -21,6 +21,16 @@ sub new {
 sub command_call_method {
     my ($self, $args) = @_;
     return "{{var}} = {{var}}->$args->[0]";
+}
+
+sub command_call_func {
+    my ($self, $args) = @_;
+    return "{{var}} = $args->[0]({{var}})";
+}
+
+sub command_one_or_zero {
+    my ($self, $args) = @_;
+    return "{{var}} = {{var}} ? 1:0";
 }
 
 sub command_deref_scalar {
@@ -65,7 +75,7 @@ sub _generate_cleanser_code {
     my $n = 0;
     my $add_if = sub {
         my ($cond0, $act0) = @_;
-        for ([\@ifs_ary, '$e'], [\@ifs_hash, '$h->{$k}'], [\@ifs_main, '$_']) {
+        for ([\@ifs_ary, '$a->[$i]'], [\@ifs_hash, '$h->{$k}'], [\@ifs_main, '$_']) {
             my $act  = $act0 ; $act  =~ s/\Q{{var}}\E/$_->[1]/g;
             my $cond = $cond0; $cond =~ s/\Q{{var}}\E/$_->[1]/g;
             push @{ $_->[0] }, "    ".($n ? "els":"")."if ($cond) { $act }\n";
@@ -82,7 +92,7 @@ sub _generate_cleanser_code {
         $add_if->('$ref && $refs{ {{var}} }++', '{{var}} = "CIRCULAR"; last');
     }
 
-    for my $on (grep {/\A\w+\z/} sort keys %$opts) {
+    for my $on (grep {/\A\w+(::\w+)*\z/} sort keys %$opts) {
         my $o = $opts->{$on};
         next unless $o;
         my $meth = "command_$o->[0]";
@@ -108,7 +118,7 @@ sub _generate_cleanser_code {
     push @code, 'state %refs;'."\n" if $circ;
     push @code, 'state $process_array;'."\n";
     push @code, 'state $process_hash;'."\n";
-    push @code, 'if (!$process_array) { $process_array = sub { my $a = shift; for my $e (@$a) { my $ref=ref($e);'."\n".join("", @ifs_ary).'} } }'."\n";
+    push @code, 'if (!$process_array) { $process_array = sub { my $a = shift; for my $i (0..$#$a) { my $ref=ref($a->[$i]);'."\n".join("", @ifs_ary).'} } }'."\n";
     push @code, 'if (!$process_hash) { $process_hash = sub { my $h = shift; for my $k (keys %$h) { my $ref=ref($h->{$k});'."\n".join("", @ifs_hash).'} } }'."\n";
     push @code, '%refs = ();'."\n" if $circ;
     push @code, 'for ($data) { my $ref=ref($_);'."\n".join("", @ifs_main).'}'."\n";
@@ -116,7 +126,12 @@ sub _generate_cleanser_code {
     push @code, '}'."\n";
 
     my $code = join("", @code).";";
-    $log->tracef("Cleanser code:\n%s", $code) if $ENV{LOG_CLEANSER_CODE};
+    if ($ENV{LOG_CLEANSER_CODE} && $log->is_trace) {
+        require SHARYANTO::String::Util;
+        $log->tracef("Cleanser code:\n%s",
+                     $ENV{LINENUM} // 1 ?
+                         SHARYANTO::String::Util::linenum($code) : $code);
+    }
     eval "\$self->{code} = $code";
     die "Can't generate code: $@" if $@;
 }
@@ -148,7 +163,7 @@ Data::Clean::Base - Base class for Data::Clean::*
 
 =head1 VERSION
 
-version 0.07
+version 0.08
 
 =for Pod::Coverage ^(command_.+)$
 
@@ -185,6 +200,15 @@ This will replace a reference like C<{}> with I<STR>.
 This will call a method and use its return as the replacement. For example:
 DateTime->from_epoch(epoch=>1000) when processed with [call_method => 'epoch']
 will become 1000.
+
+=item * ['call_func', STR]
+
+This will call a function named STR with value as argument and use its return as
+the replacement.
+
+=item * ['one_or_zero', STR]
+
+This will perform C<< $val ? 1:0 >>.
 
 =item * ['deref_scalar']
 
@@ -231,6 +255,10 @@ Clean $data. Clone $data first.
 
 Can be enabled if you want to see the generated cleanser code. It is logged at
 level C<trace>.
+
+=item * LINENUM => BOOL (default: 1)
+
+When logging cleanser code, whether to give line numbers.
 
 =back
 
