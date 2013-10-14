@@ -8,9 +8,11 @@ Makefile.PL
 README
 dist.ini
 lib/Data/Clean/Base.pm
+lib/Data/Clean/FromJSON.pm
 lib/Data/Clean/JSON.pm
 t/00-compile.t
 t/01-basics.t
+t/from_json.t
 t/release-pod-coverage.t
 t/release-pod-syntax.t
 t/release-rinci.t

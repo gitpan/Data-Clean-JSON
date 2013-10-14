@@ -7,7 +7,7 @@ use Log::Any '$log';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.09'; # VERSION
+our $VERSION = '0.10'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -163,7 +163,7 @@ Data::Clean::Base - Base class for Data::Clean::*
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =for Pod::Coverage ^(command_.+)$
 

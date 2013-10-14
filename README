@@ -2,7 +2,7 @@ NAME
     Data::Clean::JSON - Clean data so it is safe to output to JSON
 
 VERSION
-    version 0.09
+    version 0.10
 
 SYNOPSIS
      use Data::Clean::JSON;
@@ -49,8 +49,6 @@ METHODS
     Data::Clean::JSON sets some defaults.
 
         DateTime  => [call_method => 'epoch']
-        "JSON::PP::Boolean" => ['one_or_zero']
-        "JSON::XS::Boolean" => ['one_or_zero']
         Regexp    => ['stringify']
         SCALAR    => ['deref_scalar']
         -ref      => ['replace_with_ref']
