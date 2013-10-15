@@ -27,4 +27,4 @@ requires:
 resources:
   homepage: http://metacpan.org/release/Data-Clean-JSON
   repository: http://github.com/sharyanto/perl-Data-Clean-JSON
-version: 0.10
+version: 0.11
