@@ -7,7 +7,7 @@ use Log::Any '$log';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.12'; # VERSION
+our $VERSION = '0.13'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -97,7 +97,7 @@ sub _generate_cleanser_code {
         $add_if->('$ref && $refs{ {{var}} }++', '{{var}} = "CIRCULAR"; last');
     }
 
-    for my $on (grep {/\A\w+(::\w+)*\z/} sort keys %$opts) {
+    for my $on (grep {/\A\w*(::\w+)*\z/} sort keys %$opts) {
         my $o = $opts->{$on};
         next unless $o;
         my $meth = "command_$o->[0]";

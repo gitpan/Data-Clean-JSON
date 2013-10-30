@@ -6,7 +6,7 @@ use warnings;
 
 use parent qw(Data::Clean::Base);
 
-our $VERSION = '0.12'; # VERSION
+our $VERSION = '0.13'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
