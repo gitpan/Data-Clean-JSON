@@ -7,11 +7,10 @@ use Log::Any '$log';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.11'; # VERSION
+our $VERSION = '0.12'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
-    $opts{-ref} //= ['stringify'];
     my $self = bless {opts=>\%opts}, $class;
     $log->tracef("Cleanser options: %s", \%opts);
     $self->_generate_cleanser_code;
@@ -20,12 +19,16 @@ sub new {
 
 sub command_call_method {
     my ($self, $args) = @_;
-    return "{{var}} = {{var}}->$args->[0]";
+    my $mn = $args->[0];
+    die "Invalid method name syntax" unless $mn =~ /\A\w+\z/;
+    return "{{var}} = {{var}}->$mn";
 }
 
 sub command_call_func {
     my ($self, $args) = @_;
-    return "{{var}} = $args->[0]({{var}})";
+    my $fn = $args->[0];
+    die "Invalid func name syntax" unless $fn =~ /\A\w+(::\w+)*\z/;
+    return "{{var}} = $fn({{var}})";
 }
 
 sub command_one_or_zero {
@@ -49,8 +52,10 @@ sub command_replace_with_ref {
 }
 
 sub command_replace_with_str {
+    require SHARYANTO::String::Util;
+
     my ($self, $args) = @_;
-    return "{{var}} = '$args->[0]'";
+    return "{{var}} = ".SHARYANTO::String::Util::qqquote($args->[0]);
 }
 
 sub command_unbless {
@@ -157,13 +162,11 @@ __END__
 
 =pod
 
+=encoding utf-8
+
 =head1 NAME
 
 Data::Clean::Base - Base class for Data::Clean::*
-
-=head1 VERSION
-
-version 0.11
 
 =for Pod::Coverage ^(command_.+)$
 
@@ -219,6 +222,14 @@ This will replace a scalar reference like \1 with 1.
 This will perform unblessing using L<Acme::Damn>. Should be done only for
 objects (C<-obj>).
 
+=item * ['code', STR]
+
+This will replace with STR treated as Perl code.
+
+Example:
+
+ obj => ''
+
 =back
 
 Special commands for C<-circular>:
@@ -261,6 +272,23 @@ level C<trace>.
 When logging cleanser code, whether to give line numbers.
 
 =back
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Clean-JSON>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Clean-JSON>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website
+http://rt.cpan.org/Public/Dist/Display.html?Name=Data-Clean-JSON
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 

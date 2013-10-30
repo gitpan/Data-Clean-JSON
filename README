@@ -1,9 +1,6 @@
 NAME
     Data::Clean::JSON - Clean data so it is safe to output to JSON
 
-VERSION
-    version 0.11
-
 SYNOPSIS
      use Data::Clean::JSON;
      my $cleanser = Data::Clean::JSON->get_cleanser;
@@ -121,6 +118,21 @@ SEE ALSO
     Data::Rmap
 
     Data::Visitor::Callback
+
+HOMEPAGE
+    Please visit the project's homepage at
+    <https://metacpan.org/release/Data-Clean-JSON>.
+
+SOURCE
+    Source repository is at
+    <https://github.com/sharyanto/perl-Data-Clean-JSON>.
+
+BUGS
+    Please report any bugs or feature requests on the bugtracker website
+    http://rt.cpan.org/Public/Dist/Display.html?Name=Data-Clean-JSON
+
+    When submitting a bug or request, please include a test-file or a patch
+    to an existing test-file that illustrates the bug or desired feature.
 
 AUTHOR
     Steven Haryanto <stevenharyanto@gmail.com>

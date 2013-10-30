@@ -6,7 +6,7 @@ use warnings;
 
 use parent qw(Data::Clean::Base);
 
-our $VERSION = '0.11'; # VERSION
+our $VERSION = '0.12'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -32,13 +32,11 @@ __END__
 
 =pod
 
+=encoding utf-8
+
 =head1 NAME
 
 Data::Clean::JSON - Clean data so it is safe to output to JSON
-
-=head1 VERSION
-
-version 0.11
 
 =head1 SYNOPSIS
 
@@ -167,6 +165,23 @@ L<Storable>.
 L<Data::Rmap>
 
 L<Data::Visitor::Callback>
+
+=head1 HOMEPAGE
+
+Please visit the project's homepage at L<https://metacpan.org/release/Data-Clean-JSON>.
+
+=head1 SOURCE
+
+Source repository is at L<https://github.com/sharyanto/perl-Data-Clean-JSON>.
+
+=head1 BUGS
+
+Please report any bugs or feature requests on the bugtracker website
+http://rt.cpan.org/Public/Dist/Display.html?Name=Data-Clean-JSON
+
+When submitting a bug or request, please include a test-file or a
+patch to an existing test-file that illustrates the bug or desired
+feature.
 
 =head1 AUTHOR
 
