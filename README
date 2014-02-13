@@ -2,7 +2,7 @@ NAME
     Data::Clean::JSON - Clean data so it is safe to output to JSON
 
 VERSION
-    version 0.14
+    version 0.15
 
 SYNOPSIS
      use Data::Clean::JSON;
@@ -59,7 +59,7 @@ METHODS
         Regexp    => ['stringify']
         SCALAR    => ['deref_scalar']
         -ref      => ['replace_with_ref']
-        -circular => ['replace_with_str', 'CIRCULAR']
+        -circular => ['clone']
         -obj      => ['unbless']
 
   $obj->clean_in_place($data) => $cleaned

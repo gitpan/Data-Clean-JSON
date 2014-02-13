@@ -29,7 +29,7 @@ resources:
   bugtracker: https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Clean-JSON
   homepage: https://metacpan.org/release/Data-Clean-JSON
   repository: git://github.com/sharyanto/perl-Data-Clean-JSON.git
-version: '0.14'
+version: '0.15'
 x_Dist_Zilla:
   perl:
     version: '5.010001'

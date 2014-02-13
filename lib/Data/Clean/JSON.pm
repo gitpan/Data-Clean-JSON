@@ -6,7 +6,7 @@ use warnings;
 
 use parent qw(Data::Clean::Base);
 
-our $VERSION = '0.14'; # VERSION
+our $VERSION = '0.15'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -14,7 +14,7 @@ sub new {
     $opts{Regexp}    //= ['stringify'];
     $opts{SCALAR}    //= ['deref_scalar'];
     $opts{-ref}      //= ['replace_with_ref'];
-    $opts{-circular} //= ['replace_with_str', 'CIRCULAR'];
+    $opts{-circular} //= ['clone'];
     $opts{-obj}      //= ['unbless'];
     $class->SUPER::new(%opts);
 }
@@ -40,7 +40,7 @@ Data::Clean::JSON - Clean data so it is safe to output to JSON
 
 =head1 VERSION
 
-version 0.14
+version 0.15
 
 =head1 SYNOPSIS
 
@@ -101,7 +101,7 @@ Data::Clean::JSON sets some defaults.
     Regexp    => ['stringify']
     SCALAR    => ['deref_scalar']
     -ref      => ['replace_with_ref']
-    -circular => ['replace_with_str', 'CIRCULAR']
+    -circular => ['clone']
     -obj      => ['unbless']
 
 =head2 $obj->clean_in_place($data) => $cleaned

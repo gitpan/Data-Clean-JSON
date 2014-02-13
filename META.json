@@ -60,7 +60,7 @@
          "web" : "https://github.com/sharyanto/perl-Data-Clean-JSON"
       }
    },
-   "version" : "0.14",
+   "version" : "0.15",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.010001"
