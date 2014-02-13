@@ -7,7 +7,7 @@ use Log::Any '$log';
 
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.13'; # VERSION
+our $VERSION = '0.14'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -29,6 +29,12 @@ sub command_call_func {
     my $fn = $args->[0];
     die "Invalid func name syntax" unless $fn =~ /\A\w+(::\w+)*\z/;
     return "{{var}} = $fn({{var}})";
+}
+
+# old name, deprecated, will be removed someday
+sub command_detect_circular {
+    my ($self, $args) = @_;
+    return '{{var}} = "CIRCULAR"';
 }
 
 sub command_one_or_zero {
@@ -65,6 +71,14 @@ sub command_unbless {
     return "{{var}} = Acme::Damn::damn({{var}})";
 }
 
+sub command_clone {
+    require Data::Clone;
+
+    my ($self, $args) = @_;
+    my $limit = $args->[0] // 50;
+    return "if (++\$ctr_circ <= $limit) { {{var}} = Data::Clone::clone({{var}}); redo } else { {{var}} = 'CIRCULAR' }";
+}
+
 # test
 sub command_die {
     my ($self, $args) = @_;
@@ -80,9 +94,12 @@ sub _generate_cleanser_code {
     my $n = 0;
     my $add_if = sub {
         my ($cond0, $act0) = @_;
-        for ([\@ifs_ary, '$e'], [\@ifs_hash, '$h->{$k}'], [\@ifs_main, '$_']) {
+        for ([\@ifs_ary, '$e', 'ary'],
+             [\@ifs_hash, '$h->{$k}', 'hash'],
+             [\@ifs_main, '$_', 'main']) {
             my $act  = $act0 ; $act  =~ s/\Q{{var}}\E/$_->[1]/g;
             my $cond = $cond0; $cond =~ s/\Q{{var}}\E/$_->[1]/g;
+            #unless (@{ $_->[0] }) { push @{ $_->[0] }, '    say "D:'.$_->[2].' val=", '.$_->[1].', ", ref=$ref"; # DEBUG'."\n" }
             push @{ $_->[0] }, "    ".($n ? "els":"")."if ($cond) { $act }\n";
         }
         $n++;
@@ -94,7 +111,11 @@ sub _generate_cleanser_code {
 
     my $circ = $opts->{-circular};
     if ($circ) {
-        $add_if->('$ref && $refs{ {{var}} }++', '{{var}} = "CIRCULAR"; last');
+        my $meth = "command_$circ->[0]";
+        die "Can't handle command $circ->[0] for option '-circular'" unless $self->can($meth);
+        my @args = @$circ; shift @args;
+        my $act = $self->$meth(\@args);
+        $add_if->('$ref && $refs{ {{var}} }++', $act);
     }
 
     for my $on (grep {/\A\w*(::\w+)*\z/} sort keys %$opts) {
@@ -121,11 +142,12 @@ sub _generate_cleanser_code {
     push @code, 'sub {'."\n";
     push @code, 'my $data = shift;'."\n";
     push @code, 'state %refs;'."\n" if $circ;
+    push @code, 'state $ctr_circ;'."\n" if $circ;
     push @code, 'state $process_array;'."\n";
     push @code, 'state $process_hash;'."\n";
     push @code, 'if (!$process_array) { $process_array = sub { my $a = shift; for my $e (@$a) { my $ref=ref($e);'."\n".join("", @ifs_ary).'} } }'."\n";
     push @code, 'if (!$process_hash) { $process_hash = sub { my $h = shift; for my $k (keys %$h) { my $ref=ref($h->{$k});'."\n".join("", @ifs_hash).'} } }'."\n";
-    push @code, '%refs = ();'."\n" if $circ;
+    push @code, '%refs = (); $ctr_circ=0;'."\n" if $circ;
     push @code, 'for ($data) { my $ref=ref($_);'."\n".join("", @ifs_main).'}'."\n";
     push @code, '$data'."\n";
     push @code, '}'."\n";
@@ -162,11 +184,15 @@ __END__
 
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
 Data::Clean::Base - Base class for Data::Clean::*
+
+=head1 VERSION
+
+version 0.14
 
 =for Pod::Coverage ^(command_.+)$
 
@@ -181,8 +207,14 @@ reference types or class names, or C<-obj> (to refer to objects, a.k.a. blessed
 references), C<-circular> (to refer to circular references), C<-ref> (to refer
 to references, used to process references not handled by other options). Option
 values are arrayrefs, the first element of the array is command name, to specify
-what to do with the reference/class. The rest are command arguments. Available
-commands:
+what to do with the reference/class. The rest are command arguments.
+
+Note that arrayrefs and hashrefs are always walked into, so it's not trapped by
+C<-ref>.
+
+Default for C<%opts>: C<< -ref => 'stringify' >>.
+
+Available commands:
 
 =over 4
 
@@ -226,29 +258,45 @@ objects (C<-obj>).
 
 This will replace with STR treated as Perl code.
 
-Example:
+=item * ['clone', INT]
 
- obj => ''
+This command is useful if you have circular references and want to expand/copy
+them. For example:
+
+ my $def_opts = { opt1 => 'default', opt2 => 0 };
+ my $users    = { alice => $def_opts, bob => $def_opts, charlie => $def_opts };
+
+C<$users> contains three references to the same data structure. With the default
+behaviour of C<< -circular => [replace_with_str => 'CIRCULAR'] >> the cleaned
+data structure will be:
+
+ { alice   => { opt1 => 'default', opt2 => 0 },
+   bob     => 'CIRCULAR',
+   charlie => 'CIRCULAR' }
+
+But with C<< -circular => ['clone'] >> option, the data structure will be
+cleaned to become (the C<$def_opts> is cloned):
+
+ { alice   => { opt1 => 'default', opt2 => 0 },
+   bob     => { opt1 => 'default', opt2 => 0 },
+   charlie => { opt1 => 'default', opt2 => 0 }, }
+
+The command argument specifies the number of references to clone as a limit (the
+default is 50), since a cyclical structure can lead to infinite cloning. Above
+this limit, the circular references will be replaced with a string
+C<"CIRCULAR">. For example:
+
+ my $a = [1]; push @$a, $a;
+
+With C<< -circular => ['clone', 2] >> the data will be cleaned as:
+
+ [1, [1, [1, "CIRCULAR"]]]
+
+With C<< -circular => ['clone', 3] >> the data will be cleaned as:
+
+ [1, [1, [1, [1, "CIRCULAR"]]]]
 
 =back
-
-Special commands for C<-circular>:
-
-=over 4
-
-=item * ['detect_circular']
-
-Keep a count for each reference. When a circular reference is found, replace it
-with <"CIRCULAR">.
-
-=back
-
-Default options:
-
- -ref => 'stringify'
-
-Note that arrayrefs and hashrefs are always walked into, so it's not trapped by
-C<-ref>.
 
 =head2 $obj->clean_in_place($data) => $cleaned
 
@@ -283,8 +331,7 @@ Source repository is at L<https://github.com/sharyanto/perl-Data-Clean-JSON>.
 
 =head1 BUGS
 
-Please report any bugs or feature requests on the bugtracker website
-http://rt.cpan.org/Public/Dist/Display.html?Name=Data-Clean-JSON
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Clean-JSON>
 
 When submitting a bug or request, please include a test-file or a
 patch to an existing test-file that illustrates the bug or desired
@@ -296,7 +343,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Steven Haryanto.
+This software is copyright (c) 2014 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

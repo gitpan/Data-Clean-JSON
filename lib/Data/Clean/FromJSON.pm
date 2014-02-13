@@ -6,7 +6,7 @@ use warnings;
 
 use parent qw(Data::Clean::Base);
 
-our $VERSION = '0.13'; # VERSION
+our $VERSION = '0.14'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -28,11 +28,15 @@ __END__
 
 =pod
 
-=encoding utf-8
+=encoding UTF-8
 
 =head1 NAME
 
 Data::Clean::FromJSON - Clean data from JSON decoder
+
+=head1 VERSION
+
+version 0.14
 
 =head1 SYNOPSIS
 
@@ -92,8 +96,7 @@ Source repository is at L<https://github.com/sharyanto/perl-Data-Clean-JSON>.
 
 =head1 BUGS
 
-Please report any bugs or feature requests on the bugtracker website
-http://rt.cpan.org/Public/Dist/Display.html?Name=Data-Clean-JSON
+Please report any bugs or feature requests on the bugtracker website L<https://rt.cpan.org/Public/Dist/Display.html?Name=Data-Clean-JSON>
 
 When submitting a bug or request, please include a test-file or a
 patch to an existing test-file that illustrates the bug or desired
@@ -105,7 +108,7 @@ Steven Haryanto <stevenharyanto@gmail.com>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2013 by Steven Haryanto.
+This software is copyright (c) 2014 by Steven Haryanto.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
