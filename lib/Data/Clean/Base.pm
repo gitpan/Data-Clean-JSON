@@ -5,9 +5,10 @@ use strict;
 use warnings;
 use Log::Any '$log';
 
+use Function::Fallback::CoreOrPP qw(clone);
 use Scalar::Util qw(blessed);
 
-our $VERSION = '0.15'; # VERSION
+our $VERSION = '0.16'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -65,18 +66,30 @@ sub command_replace_with_str {
 }
 
 sub command_unbless {
-    require Acme::Damn;
-
     my ($self, $args) = @_;
-    return "{{var}} = Acme::Damn::damn({{var}})";
+
+    my $func;
+    if (eval { require Acme::Damn; 1 }) {
+        $func = "Acme::Damn::damn";
+    } else {
+        $func = "Function::Fallback::CoreOrPP::_unbless_fallback";
+    }
+    return "{{var}} = $func({{var}})";
 }
 
 sub command_clone {
-    require Data::Clone;
+    my $clone_func;
+    eval { require Data::Clone };
+    if ($@) {
+        require Clone::PP;
+        $clone_func = "Clone::PP::clone";
+    } else {
+        $clone_func = "Data::Clone::clone";
+    }
 
     my ($self, $args) = @_;
     my $limit = $args->[0] // 50;
-    return "if (++\$ctr_circ <= $limit) { {{var}} = Data::Clone::clone({{var}}); redo } else { {{var}} = 'CIRCULAR' }";
+    return "if (++\$ctr_circ <= $limit) { {{var}} = $clone_func({{var}}); redo } else { {{var}} = 'CIRCULAR' }";
 }
 
 # test
@@ -170,10 +183,8 @@ sub clean_in_place {
 }
 
 sub clone_and_clean {
-    require Data::Clone;
-
     my ($self, $data) = @_;
-    my $clone = Data::Clone::clone($data);
+    my $clone = clone($data);
     $self->clean_in_place($clone);
 }
 
@@ -192,7 +203,7 @@ Data::Clean::Base - Base class for Data::Clean::*
 
 =head1 VERSION
 
-version 0.15
+version 0.16
 
 =for Pod::Coverage ^(command_.+)$
 
@@ -251,8 +262,8 @@ This will replace a scalar reference like \1 with 1.
 
 =item * ['unbless']
 
-This will perform unblessing using L<Acme::Damn>. Should be done only for
-objects (C<-obj>).
+This will perform unblessing using L<Function::Fallback::CoreOrPP::unbless()>.
+Should be done only for objects (C<-obj>).
 
 =item * ['code', STR]
 
