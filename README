@@ -2,7 +2,8 @@ NAME
     Data::Clean::JSON - Clean data so it is safe to output to JSON
 
 VERSION
-    version 0.16
+    This document describes version 0.17 of Data::Clean::JSON (from Perl
+    distribution Data-Clean-JSON), released on 2014-11-07.
 
 SYNOPSIS
      use Data::Clean::JSON;
@@ -115,7 +116,7 @@ FAQ
     [2013-08-07 ] This error message is from Data::Clone::clone() when it is
     cloning an object. If you are cleaning objects, instead of using
     clone_and_clean(), try using clean_in_place(). Or, clone your data first
-    using something else like Storable.
+    using something else like Sereal.
 
 SEE ALSO
     Data::Rmap
@@ -128,7 +129,7 @@ HOMEPAGE
 
 SOURCE
     Source repository is at
-    <https://github.com/sharyanto/perl-Data-Clean-JSON>.
+    <https://github.com/perlancar/perl-Data-Clean-JSON>.
 
 BUGS
     Please report any bugs or feature requests on the bugtracker website
@@ -138,10 +139,10 @@ BUGS
     to an existing test-file that illustrates the bug or desired feature.
 
 AUTHOR
-    Steven Haryanto <stevenharyanto@gmail.com>
+    perlancar <perlancar@cpan.org>
 
 COPYRIGHT AND LICENSE
-    This software is copyright (c) 2014 by Steven Haryanto.
+    This software is copyright (c) 2014 by perlancar@cpan.org.
 
     This is free software; you can redistribute it and/or modify it under
     the same terms as the Perl 5 programming language system itself.

@@ -6,7 +6,7 @@ use warnings;
 
 use parent qw(Data::Clean::Base);
 
-our $VERSION = '0.16'; # VERSION
+our $VERSION = '0.17'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -40,7 +40,7 @@ Data::Clean::JSON - Clean data so it is safe to output to JSON
 
 =head1 VERSION
 
-version 0.16
+This document describes version 0.17 of Data::Clean::JSON (from Perl distribution Data-Clean-JSON), released on 2014-11-07.
 
 =head1 SYNOPSIS
 
@@ -162,7 +162,7 @@ The less number of checks you do, the faster the cleansing process will be.
 [2013-08-07 ] This error message is from Data::Clone::clone() when it is cloning
 an object. If you are cleaning objects, instead of using clone_and_clean(), try
 using clean_in_place(). Or, clone your data first using something else like
-L<Storable>.
+L<Sereal>.
 
 =head1 SEE ALSO
 
@@ -176,7 +176,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Data-Clean
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/sharyanto/perl-Data-Clean-JSON>.
+Source repository is at L<https://github.com/perlancar/perl-Data-Clean-JSON>.
 
 =head1 BUGS
 
@@ -188,11 +188,11 @@ feature.
 
 =head1 AUTHOR
 
-Steven Haryanto <stevenharyanto@gmail.com>
+perlancar <perlancar@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by Steven Haryanto.
+This software is copyright (c) 2014 by perlancar@cpan.org.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.

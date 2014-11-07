@@ -1,5 +1,8 @@
 package Data::Clean::Base;
 
+our $DATE = '2014-11-07'; # DATE
+our $VERSION = '0.17'; # VERSION
+
 use 5.010;
 use strict;
 use warnings;
@@ -7,8 +10,6 @@ use Log::Any '$log';
 
 use Function::Fallback::CoreOrPP qw(clone);
 use Scalar::Util qw(blessed);
-
-our $VERSION = '0.16'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -68,13 +69,14 @@ sub command_replace_with_str {
 sub command_unbless {
     my ($self, $args) = @_;
 
-    my $func;
-    if (eval { require Acme::Damn; 1 }) {
-        $func = "Acme::Damn::damn";
-    } else {
-        $func = "Function::Fallback::CoreOrPP::_unbless_fallback";
-    }
-    return "{{var}} = $func({{var}})";
+    # Data::Clone by default does not clone objects, so Acme::Damn can modify
+    # the original object despite the use of clone(), so we need to know whether
+    # user runs clone_and_clean() or clean_in_place() and avoid the use of
+    # Acme::Damn for the former case. this workaround will be unnecessary when
+    # Data::Clone clones objects.
+
+    my $acme_damn_available = eval { require Acme::Damn; 1 };
+    return "if (!\$Data::Clean::Base::_clone && $acme_damn_available) { {{var}} = Acme::Damn::damn({{var}}) } else { {{var}} = Function::Fallback::CoreOrPP::_unbless_fallback({{var}}) }";
 }
 
 sub command_clone {
@@ -185,6 +187,7 @@ sub clean_in_place {
 sub clone_and_clean {
     my ($self, $data) = @_;
     my $clone = clone($data);
+    local $Data::Clean::Base::_clone = 1;
     $self->clean_in_place($clone);
 }
 
@@ -203,7 +206,7 @@ Data::Clean::Base - Base class for Data::Clean::*
 
 =head1 VERSION
 
-version 0.16
+This document describes version 0.17 of Data::Clean::Base (from Perl distribution Data-Clean-JSON), released on 2014-11-07.
 
 =for Pod::Coverage ^(command_.+)$
 
@@ -338,7 +341,7 @@ Please visit the project's homepage at L<https://metacpan.org/release/Data-Clean
 
 =head1 SOURCE
 
-Source repository is at L<https://github.com/sharyanto/perl-Data-Clean-JSON>.
+Source repository is at L<https://github.com/perlancar/perl-Data-Clean-JSON>.
 
 =head1 BUGS
 
@@ -350,11 +353,11 @@ feature.
 
 =head1 AUTHOR
 
-Steven Haryanto <stevenharyanto@gmail.com>
+perlancar <perlancar@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is copyright (c) 2014 by Steven Haryanto.
+This software is copyright (c) 2014 by perlancar@cpan.org.
 
 This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
