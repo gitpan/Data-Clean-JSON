@@ -2,8 +2,8 @@ NAME
     Data::Clean::JSON - Clean data so it is safe to output to JSON
 
 VERSION
-    This document describes version 0.17 of Data::Clean::JSON (from Perl
-    distribution Data-Clean-JSON), released on 2014-11-07.
+    This document describes version 0.18 of Data::Clean::JSON (from Perl
+    distribution Data-Clean-JSON), released on 2014-11-12.
 
 SYNOPSIS
      use Data::Clean::JSON;

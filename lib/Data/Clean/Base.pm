@@ -1,7 +1,7 @@
 package Data::Clean::Base;
 
-our $DATE = '2014-11-07'; # DATE
-our $VERSION = '0.17'; # VERSION
+our $DATE = '2014-11-12'; # DATE
+our $VERSION = '0.18'; # VERSION
 
 use 5.010;
 use strict;
@@ -206,7 +206,7 @@ Data::Clean::Base - Base class for Data::Clean::*
 
 =head1 VERSION
 
-This document describes version 0.17 of Data::Clean::Base (from Perl distribution Data-Clean-JSON), released on 2014-11-07.
+This document describes version 0.18 of Data::Clean::Base (from Perl distribution Data-Clean-JSON), released on 2014-11-12.
 
 =for Pod::Coverage ^(command_.+)$
 

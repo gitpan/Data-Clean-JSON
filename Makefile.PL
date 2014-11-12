@@ -20,9 +20,7 @@ my %WriteMakefileArgs = (
   "LICENSE" => "perl",
   "NAME" => "Data::Clean::JSON",
   "PREREQ_PM" => {
-    "Acme::Damn" => 0,
     "Clone::PP" => 0,
-    "Data::Clone" => 0,
     "Function::Fallback::CoreOrPP" => "0.05",
     "Log::Any" => 0,
     "SHARYANTO::String::Util" => "0.25"
@@ -36,7 +34,7 @@ my %WriteMakefileArgs = (
     "Test::Exception" => 0,
     "Test::More" => "0.98"
   },
-  "VERSION" => "0.17",
+  "VERSION" => "0.18",
   "test" => {
     "TESTS" => "t/*.t"
   }
@@ -44,9 +42,7 @@ my %WriteMakefileArgs = (
 
 
 my %FallbackPrereqs = (
-  "Acme::Damn" => 0,
   "Clone::PP" => 0,
-  "Data::Clone" => 0,
   "DateTime" => 0,
   "File::Spec" => 0,
   "Function::Fallback::CoreOrPP" => "0.05",
