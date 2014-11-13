@@ -64,7 +64,7 @@
          "web" : "https://github.com/perlancar/perl-Data-Clean-JSON"
       }
    },
-   "version" : "0.18",
+   "version" : "0.19",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.018002"
@@ -260,9 +260,14 @@
                         "version" : "4.006"
                      },
                      {
+                        "class" : "Pod::Weaver::Section::BashCompletion::GetoptLongComplete",
+                        "name" : "@Author::PERLANCAR/BashCompletion::GetoptLongComplete",
+                        "version" : "0.01"
+                     },
+                     {
                         "class" : "Pod::Weaver::Section::BashCompletion::PerinciCmdLine",
                         "name" : "@Author::PERLANCAR/BashCompletion::PerinciCmdLine",
-                        "version" : "0.02"
+                        "version" : "0.03"
                      },
                      {
                         "class" : "Pod::Weaver::Section::Homepage::DefaultCPAN",

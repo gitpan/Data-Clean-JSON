@@ -1,7 +1,7 @@
 package Data::Clean::Base;
 
-our $DATE = '2014-11-12'; # DATE
-our $VERSION = '0.18'; # VERSION
+our $DATE = '2014-11-13'; # DATE
+our $VERSION = '0.19'; # VERSION
 
 use 5.010;
 use strict;
@@ -75,7 +75,7 @@ sub command_unbless {
     # Acme::Damn for the former case. this workaround will be unnecessary when
     # Data::Clone clones objects.
 
-    my $acme_damn_available = eval { require Acme::Damn; 1 };
+    my $acme_damn_available = eval { require Acme::Damn; 1 } ? 1:0;
     return "if (!\$Data::Clean::Base::_clone && $acme_damn_available) { {{var}} = Acme::Damn::damn({{var}}) } else { {{var}} = Function::Fallback::CoreOrPP::_unbless_fallback({{var}}) }";
 }
 
@@ -206,7 +206,7 @@ Data::Clean::Base - Base class for Data::Clean::*
 
 =head1 VERSION
 
-This document describes version 0.18 of Data::Clean::Base (from Perl distribution Data-Clean-JSON), released on 2014-11-12.
+This document describes version 0.19 of Data::Clean::Base (from Perl distribution Data-Clean-JSON), released on 2014-11-13.
 
 =for Pod::Coverage ^(command_.+)$
 

@@ -6,7 +6,7 @@ use warnings;
 
 use parent qw(Data::Clean::Base);
 
-our $VERSION = '0.18'; # VERSION
+our $VERSION = '0.19'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -36,7 +36,7 @@ Data::Clean::FromJSON - Clean data from JSON decoder
 
 =head1 VERSION
 
-This document describes version 0.18 of Data::Clean::FromJSON (from Perl distribution Data-Clean-JSON), released on 2014-11-12.
+This document describes version 0.19 of Data::Clean::FromJSON (from Perl distribution Data-Clean-JSON), released on 2014-11-13.
 
 =head1 SYNOPSIS
 
