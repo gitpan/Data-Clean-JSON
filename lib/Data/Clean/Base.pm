@@ -1,7 +1,7 @@
 package Data::Clean::Base;
 
-our $DATE = '2014-11-13'; # DATE
-our $VERSION = '0.19'; # VERSION
+our $DATE = '2014-12-10'; # DATE
+our $VERSION = '0.20'; # VERSION
 
 use 5.010;
 use strict;
@@ -60,10 +60,10 @@ sub command_replace_with_ref {
 }
 
 sub command_replace_with_str {
-    require SHARYANTO::String::Util;
+    require String::PerlQuote;
 
     my ($self, $args) = @_;
-    return "{{var}} = ".SHARYANTO::String::Util::qqquote($args->[0]);
+    return "{{var}} = ".String::PerlQuote::double_quote($args->[0]);
 }
 
 sub command_unbless {
@@ -169,10 +169,10 @@ sub _generate_cleanser_code {
 
     my $code = join("", @code).";";
     if ($ENV{LOG_CLEANSER_CODE} && $log->is_trace) {
-        require SHARYANTO::String::Util;
+        require String::LineNumber;
         $log->tracef("Cleanser code:\n%s",
                      $ENV{LINENUM} // 1 ?
-                         SHARYANTO::String::Util::linenum($code) : $code);
+                         String::LineNumber::linenum($code) : $code);
     }
     eval "\$self->{code} = $code";
     die "Can't generate code: $@" if $@;
@@ -206,7 +206,7 @@ Data::Clean::Base - Base class for Data::Clean::*
 
 =head1 VERSION
 
-This document describes version 0.19 of Data::Clean::Base (from Perl distribution Data-Clean-JSON), released on 2014-11-13.
+This document describes version 0.20 of Data::Clean::Base (from Perl distribution Data-Clean-JSON), released on 2014-12-10.
 
 =for Pod::Coverage ^(command_.+)$
 

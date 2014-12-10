@@ -6,7 +6,7 @@ use warnings;
 
 use parent qw(Data::Clean::Base);
 
-our $VERSION = '0.19'; # VERSION
+our $VERSION = '0.20'; # VERSION
 
 sub new {
     my ($class, %opts) = @_;
@@ -40,7 +40,7 @@ Data::Clean::JSON - Clean data so it is safe to output to JSON
 
 =head1 VERSION
 
-This document describes version 0.19 of Data::Clean::JSON (from Perl distribution Data-Clean-JSON), released on 2014-11-13.
+This document describes version 0.20 of Data::Clean::JSON (from Perl distribution Data-Clean-JSON), released on 2014-12-10.
 
 =head1 SYNOPSIS
 
